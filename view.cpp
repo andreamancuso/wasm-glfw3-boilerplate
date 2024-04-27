@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <webgpu/webgpu.h>
 #include <webgpu/webgpu_cpp.h>
+#include <string>
 
 #ifndef VIEW
 #define VIEW

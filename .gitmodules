@@ -1,0 +1,9 @@
+[submodule "deps/emscripten"]
+	path = deps/emscripten
+	url = https://github.com/emscripten-core/emscripten.git
+[submodule "deps/webgpu-headers"]
+	path = deps/webgpu-headers
+	url = https://github.com/webgpu-native/webgpu-headers.git
+[submodule "deps/glfw"]
+	path = deps/glfw
+	url = https://github.com/glfw/glfw.git
