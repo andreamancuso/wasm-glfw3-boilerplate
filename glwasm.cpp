@@ -18,7 +18,7 @@
 static std::function<void()>            MainLoopForEmscriptenP;
 static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 #define EMSCRIPTEN_MAINLOOP_BEGIN       MainLoopForEmscriptenP = [&]()
-#define EMSCRIPTEN_MAINLOOP_END         ; emscripten_set_main_loop(MainLoopForEmscripten, 15, true) // 24 frames / second, use 0 for browser's default
+#define EMSCRIPTEN_MAINLOOP_END         ; emscripten_set_main_loop(MainLoopForEmscripten, 30, true) // 24 frames / second, use 0 for browser's default
 #else
 #define EMSCRIPTEN_MAINLOOP_BEGIN
 #define EMSCRIPTEN_MAINLOOP_END
