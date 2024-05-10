@@ -21,7 +21,7 @@ class View {
             return glWindowTitle;
         }
 
-        virtual void SetUp(char* canvasSelector, WGPUDevice device, GLFWwindow* glfwWindow, WGPUTextureFormat wgpu_preferred_fmt) = 0;
+        virtual void SetUp(char* pCanvasSelector, WGPUDevice device, GLFWwindow* glfwWindow, WGPUTextureFormat wgpu_preferred_fmt) = 0;
         virtual void PrepareForRender() = 0;
         virtual void Render(int window_width, int window_height) = 0;
         virtual void RenderDrawData(WGPURenderPassEncoder pass) = 0;
