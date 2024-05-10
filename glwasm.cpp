@@ -1,8 +1,8 @@
 #include <stdio.h>
+#include <memory>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/bind.h>
-#include <emscripten/val.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
 #endif
