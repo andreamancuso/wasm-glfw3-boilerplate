@@ -45,7 +45,7 @@ static void wgpu_error_callback(WGPUErrorType error_type, const char* message, v
 
 class GLWasm {
     protected:
-        std::string canvasSelector;
+        std::unique_ptr<char[]> canvasSelector;
         wgpu::Instance instance;
         WGPUDevice device;
         GLFWwindow* glfwWindow;
@@ -73,7 +73,7 @@ class GLWasm {
             // seem to be inline with struct alignments in the C++ structure
             wgpu::SurfaceDescriptorFromCanvasHTMLSelector html_surface_desc = {};
 
-            html_surface_desc.selector = canvasSelector.c_str();
+            html_surface_desc.selector = canvasSelector.get();
 
             wgpu::SurfaceDescriptor surface_desc = {};
             surface_desc.nextInChain = &html_surface_desc;
@@ -123,7 +123,7 @@ class GLWasm {
         void SetUp() {
             InitGlfw();
 
-            view->SetUp(canvasSelector, device, glfwWindow, wgpu_preferred_fmt);
+            view->SetUp(canvasSelector.get(), device, glfwWindow, wgpu_preferred_fmt);
             view->PrepareForRender();
         }
 
@@ -160,7 +160,8 @@ class GLWasm {
         }
 
         void Init(std::string cs) {
-            canvasSelector = cs;
+            this->canvasSelector = std::make_unique<char[]>(cs.length() + 1);
+            strcpy(this->canvasSelector.get(), cs.c_str());
 
             instance.RequestAdapter(
             nullptr,
