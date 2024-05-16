@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <thread>
 #include <memory>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -159,27 +160,41 @@ class GLWasm {
             }
         }
 
+        void SetDeviceAndStart(WGPUDevice& cDevice) {
+            this->device = cDevice;
+
+            Start();
+        }
+
+        static void GetDevice(wgpu::Instance wgpuInstance, GLWasm* glWasmInstance) {
+            wgpuInstance.RequestAdapter(
+                nullptr,
+                [](WGPURequestAdapterStatus status, WGPUAdapter cAdapter,
+                    const char* message, void* userdata) {
+
+                    if (status != WGPURequestAdapterStatus_Success) {
+                        exit(0);
+                    }
+
+                    wgpu::Adapter adapter = wgpu::Adapter::Acquire(cAdapter);
+
+                    adapter.RequestDevice(
+                        nullptr,
+                        [](WGPURequestDeviceStatus status, WGPUDevice cDevice,
+                        const char* message, void* userdata) {
+                            reinterpret_cast<GLWasm*>(userdata)->SetDeviceAndStart(cDevice);
+                        },
+                        userdata);
+                }, reinterpret_cast<void*>(glWasmInstance));
+        }
+
         void Init(std::string cs) {
             this->canvasSelector = std::make_unique<char[]>(cs.length() + 1);
             strcpy(this->canvasSelector.get(), cs.c_str());
 
-            instance.RequestAdapter(
-            nullptr,
-            [](WGPURequestAdapterStatus status, WGPUAdapter cAdapter,
-                const char* message, void* userdata) {
-                if (status != WGPURequestAdapterStatus_Success) {
-                    exit(0);
-                }
-                wgpu::Adapter adapter = wgpu::Adapter::Acquire(cAdapter);
+            std::thread t(GLWasm::GetDevice, instance, this);
 
-                adapter.RequestDevice(
-                    nullptr,
-                    [](WGPURequestDeviceStatus status, WGPUDevice cDevice,
-                    const char* message, void* userdata) {
-                        reinterpret_cast<GLWasm*>(userdata)->Start(cDevice);
-                    },
-                    userdata);
-            }, reinterpret_cast<void*>(this));
+            t.join();
         }
 
         void PerformWGPURendering() {
@@ -208,9 +223,7 @@ class GLWasm {
             wgpuQueueSubmit(queue, 1, &cmd_buffer);
         }
 
-        void Start(WGPUDevice cDevice) {
-            device = cDevice;
-
+        void Start() {
             SetUp();
 
             // Main loop
