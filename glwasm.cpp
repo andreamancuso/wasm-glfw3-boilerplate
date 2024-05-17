@@ -46,59 +46,59 @@ static void wgpu_error_callback(WGPUErrorType error_type, const char* message, v
 
 class GLWasm {
     protected:
-        std::unique_ptr<char[]> canvasSelector;
-        wgpu::Instance instance;
-        WGPUDevice device;
-        GLFWwindow* glfwWindow;
-        WGPUSurface wgpu_surface;
-        WGPUTextureFormat wgpu_preferred_fmt = WGPUTextureFormat_RGBA8Unorm;
-        WGPUSwapChain wgpu_swap_chain;
-        int wgpu_swap_chain_width = 0;
-        int wgpu_swap_chain_height = 0;
-        int initial_window_width = 400;
-        int initial_window_height = 300;
-        int window_width = initial_window_width;
-        int window_height = initial_window_height;
-        View* view;
+        std::unique_ptr<char[]> m_canvasSelector;
+        wgpu::Instance m_instance;
+        WGPUDevice m_device;
+        GLFWwindow* m_glfwWindow;
+        WGPUSurface m_wgpu_surface;
+        WGPUTextureFormat m_wgpu_preferred_fmt = WGPUTextureFormat_RGBA8Unorm;
+        WGPUSwapChain m_wgpu_swap_chain;
+        int m_wgpu_swap_chain_width = 0;
+        int m_wgpu_swap_chain_height = 0;
+        int m_initial_window_width = 400;
+        int m_initial_window_height = 300;
+        int m_window_width = m_initial_window_width;
+        int m_window_height = m_initial_window_height;
+        View* m_view;
 
         bool InitWGPU() {
-            if (!device) {
+            if (!m_device) {
                 printf("device not set\n");
                 return false;
             }
 
-            wgpuDeviceSetUncapturedErrorCallback(device, wgpu_error_callback, nullptr);
+            wgpuDeviceSetUncapturedErrorCallback(m_device, wgpu_error_callback, nullptr);
 
             // Use C++ wrapper due to misbehavior in Emscripten.
             // Some offset computation for wgpuInstanceCreateSurface in JavaScript
             // seem to be inline with struct alignments in the C++ structure
             wgpu::SurfaceDescriptorFromCanvasHTMLSelector html_surface_desc = {};
 
-            html_surface_desc.selector = canvasSelector.get();
+            html_surface_desc.selector = m_canvasSelector.get();
 
             wgpu::SurfaceDescriptor surface_desc = {};
             surface_desc.nextInChain = &html_surface_desc;
 
-            wgpu::Surface surface = instance.CreateSurface(&surface_desc);
+            wgpu::Surface surface = m_instance.CreateSurface(&surface_desc);
             wgpu::Adapter adapter = {};
-            wgpu_preferred_fmt = (WGPUTextureFormat)surface.GetPreferredFormat(adapter);
-            wgpu_surface = surface.MoveToCHandle();
+            m_wgpu_preferred_fmt = (WGPUTextureFormat)surface.GetPreferredFormat(adapter);
+            m_wgpu_surface = surface.MoveToCHandle();
 
             return true;
         }
 
         void CreateSwapChain(int width, int height) {
-            if (wgpu_swap_chain)
-                wgpuSwapChainRelease(wgpu_swap_chain);
-            wgpu_swap_chain_width = width;
-            wgpu_swap_chain_height = height;
+            if (m_wgpu_swap_chain)
+                wgpuSwapChainRelease(m_wgpu_swap_chain);
+            m_wgpu_swap_chain_width = width;
+            m_wgpu_swap_chain_height = height;
             WGPUSwapChainDescriptor swap_chain_desc = {};
             swap_chain_desc.usage = WGPUTextureUsage_RenderAttachment;
-            swap_chain_desc.format = wgpu_preferred_fmt;
+            swap_chain_desc.format = m_wgpu_preferred_fmt;
             swap_chain_desc.width = width;
             swap_chain_desc.height = height;
             swap_chain_desc.presentMode = WGPUPresentMode_Fifo;
-            wgpu_swap_chain = wgpuDeviceCreateSwapChain(device, wgpu_surface, &swap_chain_desc);
+            m_wgpu_swap_chain = wgpuDeviceCreateSwapChain(m_device, m_wgpu_surface, &swap_chain_desc);
         }
 
         void InitGlfw() {
@@ -108,40 +108,40 @@ class GLWasm {
             // Make sure GLFW does not initialize any graphics context.
             // This needs to be done explicitly later.
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-            glfwWindow = glfwCreateWindow(window_width, window_height, view->GetGlWindowTitle(), nullptr, nullptr);
+            m_glfwWindow = glfwCreateWindow(m_window_width, m_window_height, m_view->GetGlWindowTitle(), nullptr, nullptr);
 
             // Initialize the WebGPU environment
             if (!InitWGPU())
             {
-                if (glfwWindow)
-                    glfwDestroyWindow(glfwWindow);
+                if (m_glfwWindow)
+                    glfwDestroyWindow(m_glfwWindow);
                 glfwTerminate();
                 return;
             }
-            glfwShowWindow(glfwWindow);
+            glfwShowWindow(m_glfwWindow);
         }
 
         void SetUp() {
             InitGlfw();
 
-            view->SetUp(canvasSelector.get(), device, glfwWindow, wgpu_preferred_fmt);
-            view->PrepareForRender();
+            m_view->SetUp(m_canvasSelector.get(), m_device, m_glfwWindow, m_wgpu_preferred_fmt);
+            m_view->PrepareForRender();
         }
 
         void HandleScreenSizeChanged() {
             int width, height;
-            glfwGetFramebufferSize((GLFWwindow*)glfwWindow, &width, &height);
-            if (width != wgpu_swap_chain_width && height != wgpu_swap_chain_height)
+            glfwGetFramebufferSize((GLFWwindow*)m_glfwWindow, &width, &height);
+            if (width != m_wgpu_swap_chain_width && height != m_wgpu_swap_chain_height)
             {
                 CreateSwapChain(width, height);
 
-                view->HandleScreenSizeChanged();
+                m_view->HandleScreenSizeChanged();
             }
         }
 
         GLWasm(View* v) {
-            instance = wgpu::CreateInstance();
-            view = v;
+            m_instance = wgpu::CreateInstance();
+            m_view = v;
         }
 
     public:
@@ -152,16 +152,16 @@ class GLWasm {
         }
 
         void SetWindowSize(int width, int height) {
-            window_width = width;
-            window_height = height;
+            m_window_width = width;
+            m_window_height = height;
 
-            if (glfwWindow) {
-                glfwSetWindowSize(glfwWindow, width, height);
+            if (m_glfwWindow) {
+                glfwSetWindowSize(m_glfwWindow, width, height);
             }
         }
 
         void SetDeviceAndStart(WGPUDevice& cDevice) {
-            this->device = cDevice;
+            m_device = cDevice;
 
             Start();
         }
@@ -189,10 +189,10 @@ class GLWasm {
         }
 
         void Init(std::string cs) {
-            this->canvasSelector = std::make_unique<char[]>(cs.length() + 1);
-            strcpy(this->canvasSelector.get(), cs.c_str());
+            m_canvasSelector = std::make_unique<char[]>(cs.length() + 1);
+            strcpy(m_canvasSelector.get(), cs.c_str());
 
-            std::thread t(GLWasm::GetDevice, instance, this);
+            std::thread t(GLWasm::GetDevice, m_instance, this);
 
             t.join();
         }
@@ -202,8 +202,8 @@ class GLWasm {
             color_attachments.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
             color_attachments.loadOp = WGPULoadOp_Clear;
             color_attachments.storeOp = WGPUStoreOp_Store;
-            color_attachments.clearValue = view->GetClearColor();
-            color_attachments.view = wgpuSwapChainGetCurrentTextureView(wgpu_swap_chain);
+            color_attachments.clearValue = m_view->GetClearColor();
+            color_attachments.view = wgpuSwapChainGetCurrentTextureView(m_wgpu_swap_chain);
 
             WGPURenderPassDescriptor render_pass_desc = {};
             render_pass_desc.colorAttachmentCount = 1;
@@ -211,15 +211,15 @@ class GLWasm {
             render_pass_desc.depthStencilAttachment = nullptr;
 
             WGPUCommandEncoderDescriptor enc_desc = {};
-            WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, &enc_desc);
+            WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(m_device, &enc_desc);
 
             WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass_desc);
-            view->RenderDrawData(pass);
+            m_view->RenderDrawData(pass);
             wgpuRenderPassEncoderEnd(pass);
 
             WGPUCommandBufferDescriptor cmd_buffer_desc = {};
             WGPUCommandBuffer cmd_buffer = wgpuCommandEncoderFinish(encoder, &cmd_buffer_desc);
-            WGPUQueue queue = wgpuDeviceGetQueue(device);
+            WGPUQueue queue = wgpuDeviceGetQueue(m_device);
             wgpuQueueSubmit(queue, 1, &cmd_buffer);
         }
 
@@ -230,14 +230,14 @@ class GLWasm {
         #ifdef __EMSCRIPTEN__
             EMSCRIPTEN_MAINLOOP_BEGIN
         #else
-            while (!glfwWindowShouldClose(glfwWindow))
+            while (!glfwWindowShouldClose(m_glfwWindow))
         #endif
             {
                 glfwPollEvents();
 
                 HandleScreenSizeChanged();
 
-                view->Render(window_width, window_height);
+                m_view->Render(m_window_width, m_window_height);
 
                 PerformWGPURendering();
             }
@@ -245,10 +245,10 @@ class GLWasm {
             EMSCRIPTEN_MAINLOOP_END;
         #endif
             // Clean up
-            view->CleanUp();
+            m_view->CleanUp();
 
 
-            glfwDestroyWindow(glfwWindow);
+            glfwDestroyWindow(m_glfwWindow);
             glfwTerminate();
         }
 };

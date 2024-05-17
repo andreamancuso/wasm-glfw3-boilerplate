@@ -8,17 +8,17 @@
 
 class View {
     protected:
-        const char* windowId;
-        const char* glWindowTitle;
+        const char* m_windowId;
+        const char* m_glWindowTitle;
 
     public:
-        View(const char* newWindowId, const char* newGlWindowTitle) {
-            windowId = newGlWindowTitle;
-            glWindowTitle = newGlWindowTitle;
+        View(const char* windowId, const char* glWindowTitle) {
+            m_windowId = windowId;
+            m_glWindowTitle = glWindowTitle;
         }
 
         const char* GetGlWindowTitle() {
-            return glWindowTitle;
+            return m_glWindowTitle;
         }
 
         virtual void SetUp(char* pCanvasSelector, WGPUDevice device, GLFWwindow* glfwWindow, WGPUTextureFormat wgpu_preferred_fmt) = 0;
