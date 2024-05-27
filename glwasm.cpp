@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <thread>
+#include <cstring>
 #include <memory>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -192,9 +192,7 @@ class GLWasm {
             m_canvasSelector = std::make_unique<char[]>(cs.length() + 1);
             strcpy(m_canvasSelector.get(), cs.c_str());
 
-            std::thread t(GLWasm::GetDevice, m_instance, this);
-
-            t.join();
+            GetDevice(m_instance, this);
         }
 
         void PerformWGPURendering() {
