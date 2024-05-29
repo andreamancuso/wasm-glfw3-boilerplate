@@ -188,7 +188,7 @@ class GLWasm {
                 }, reinterpret_cast<void*>(glWasmInstance));
         }
 
-        void Init(std::string cs) {
+        void Init(std::string& cs) {
             m_canvasSelector = std::make_unique<char[]>(cs.length() + 1);
             strcpy(m_canvasSelector.get(), cs.c_str());
 
