@@ -49,6 +49,7 @@ class GLWasm {
         std::unique_ptr<char[]> m_canvasSelector;
         wgpu::Instance m_instance;
         WGPUDevice m_device;
+        WGPUQueue m_queue;
         GLFWwindow* m_glfwWindow;
         WGPUSurface m_wgpu_surface;
         WGPUTextureFormat m_wgpu_preferred_fmt = WGPUTextureFormat_RGBA8Unorm;
@@ -217,8 +218,8 @@ class GLWasm {
 
             WGPUCommandBufferDescriptor cmd_buffer_desc = {};
             WGPUCommandBuffer cmd_buffer = wgpuCommandEncoderFinish(encoder, &cmd_buffer_desc);
-            WGPUQueue queue = wgpuDeviceGetQueue(m_device);
-            wgpuQueueSubmit(queue, 1, &cmd_buffer);
+            m_queue = wgpuDeviceGetQueue(m_device);
+            wgpuQueueSubmit(m_queue, 1, &cmd_buffer);
         }
 
         void Start() {

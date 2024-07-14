@@ -10,6 +10,7 @@ class View {
     protected:
         const char* m_windowId;
         const char* m_glWindowTitle;
+        WGPUDevice m_device;
 
     public:
         View(const char* windowId, const char* glWindowTitle) {
