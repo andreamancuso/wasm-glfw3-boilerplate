@@ -22,6 +22,10 @@ class View {
             return m_glWindowTitle;
         }
 
+        WGPUDevice& GetDevice() {
+            return m_device;
+        }
+
         virtual void SetUp(char* pCanvasSelector, WGPUDevice device, GLFWwindow* glfwWindow, WGPUTextureFormat wgpu_preferred_fmt) = 0;
         virtual void PrepareForRender() = 0;
         virtual void Render(int window_width, int window_height) = 0;
