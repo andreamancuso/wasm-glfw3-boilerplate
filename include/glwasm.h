@@ -26,6 +26,8 @@ static void MainLoopForEmscripten()     { MainLoopForEmscriptenP(); }
 #define EMSCRIPTEN_MAINLOOP_END
 #endif
 
+#ifndef GLWASM_H
+#define GLWASM_H
 static void wgpu_error_callback(WGPUErrorType error_type, const char* message, void*);
 
 class GLWasm final : public GLFW3Renderer {
@@ -67,3 +69,5 @@ class GLWasm final : public GLFW3Renderer {
 
         void Start() override;
 };
+
+#endif

@@ -4,6 +4,7 @@
 #include <webgpu/webgpu.h>
 #include <webgpu/webgpu_cpp.h>
 
+#include "glfw3renderer.h"
 #include "glwasm.h"
 
 void wgpu_error_callback(WGPUErrorType error_type, const char* message, void*)

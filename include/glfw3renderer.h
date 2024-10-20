@@ -6,6 +6,8 @@
 
 #include "./view.h"
 
+#ifndef GLFW3_RENDERER_H
+#define GLFW3_RENDERER_H
 static void glfw_error_callback(int error, const char* description);
 
 class GLFW3Renderer {
@@ -38,3 +40,5 @@ class GLFW3Renderer {
 
         virtual void CleanUp();
 };
+
+#endif
