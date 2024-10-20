@@ -1,0 +1,8 @@
+{
+    "name": "wasmglfw3boilerplate",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "opengl-registry",
+        "stb"
+    ]
+}
