@@ -21,9 +21,9 @@ class GLFW3Renderer {
 
         virtual void InitGlfw();
 
-        virtual void SetUp();
+        virtual void SetUp() = 0;
 
-        virtual void HandleScreenSizeChanged();
+        virtual void HandleScreenSizeChanged() = 0;
 
         explicit GLFW3Renderer(View* v);
 
@@ -32,11 +32,11 @@ class GLFW3Renderer {
 
         // static GLFW3Renderer& GetInstance(View* v);
 
-        virtual void SetWindowSize(int width, int height);
+        virtual void SetWindowSize(int width, int height) = 0;
 
-        virtual void PerformRendering();
+        virtual void PerformRendering() = 0;
 
-        virtual void Start();
+        virtual void Start() = 0;
 
         virtual void CleanUp();
 };
