@@ -5,6 +5,10 @@ void glfw_error_callback(int error, const char* description)
     printf("GLFW Error %d: %s\n", error, description);
 }
 
+GLFW3Renderer::GLFW3Renderer(View* v) {
+    m_view = v;
+}
+
 void GLFW3Renderer::InitGlfw() {
     glfwSetErrorCallback(glfw_error_callback);
     glfwInit();

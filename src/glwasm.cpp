@@ -23,7 +23,6 @@ void wgpu_error_callback(WGPUErrorType error_type, const char* message, void*)
 
 GLWasm::GLWasm(View* v): GLFW3Renderer(v) {
     m_instance = wgpu::CreateInstance();
-    m_view = v;
 }
 
 GLWasm& GLWasm::GetInstance(View* v) {
